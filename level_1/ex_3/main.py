@@ -7,24 +7,26 @@ def get_connection(db_name = 'library.db'):
 
 conn = get_connection()
 start = '''
-drop table if exists authors
-drop table if exists books
+drop table if exists books;
+drop table if exists authors;
 
-create table authors if not exists(
+create table if not exists authors(
  id integer primary key, 
  name text not null
-) strict 
+) strict;
 
 
-create table books if not exists(
+create table if not exists books(
  id integer primary key, 
  title text not null,
  subject text not null, 
  author_id integer not null, 
  foreign key(author_id) references authors(id)
-) strict 
+) strict;
 '''
-conn.execute(start)
+#solved syntax error. Table name should be after all statements
+
+conn.executescript(start) #execute() only process one statement at a time
 
 def add_author(conn, id, name):
     conn.execute('''
@@ -33,7 +35,7 @@ def add_author(conn, id, name):
 
 def add_book(conn, id, title, subject, author_id):
     conn.execute('''
-        insert into boooks(id, title, subject, author_id) values(?, ?, ?, ?)
+        insert into books(id, title, subject, author_id) values(?, ?, ?, ?)
     ''', [id, title, subject, author_id])
 
 add_author(conn, 1, "J.R.R. Tolkien")
